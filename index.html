@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quit in React</title>
+    <style>
+        .container{
+            text-align: center;
+            background-color: antiquewhite;
+            height: 100%;
+        }
+        .quizBox{
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            width: 40rem;
+            margin: auto;
+            padding: 1rem;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            background-color: #fff;
+        }
+        h1{
+            font-size: 3rem;
+            padding-top: 1rem;
+        }
+        .submitBtn{
+            background-color: greenyellow;
+            border: none;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            width: 10rem;
+            font-size: 1.5rem;
+            border-radius: 15px;
+        }
+        .submitBtn:hover{
+            cursor: pointer;
+            color: red;
+        }
+        label{
+            font-size: 1.5rem;
+        }
+        .radioBtn:hover{
+            cursor: pointer;
+        }
+        .resetBtn{
+            background-color: red;
+            border: none;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            width: 15rem;
+            font-size: 1.5rem;
+            border-radius: 15px;
+            color: white;
+        }
+        .resetBtn:hover{
+            cursor: pointer;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+    <script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+        function Quit(){
+            //here I have stored all the questions, option and answers in an array of objects...
+            const[questions, setQuestions] = React.useState([
+                {
+                    question: 'Q1. Who Developed React?',
+                    answers: ['Google', 'Yahoo', 'FaceBook', 'Twitter'],
+                    correct: 'FaceBook',
+                },
+                {
+                    question: 'Q2. Where is Zojila Pass Located?',
+                    answers: ['Himachal Pradesh', 'Ladakh', 'jammu & Kashmir', 'Sikkim'],
+                    correct: 'Ladakh'
+                },
+                {
+                    question: 'Q3. Where is Somnath Temple Located?',
+                    answers: ['Gujarat', 'Tamilnadu', 'Madhya Pradesh', 'Delhi'],
+                    correct: 'Gujarat',
+                }
+            ]);
+
+            const [selectedAnswers, setSelectedAnswers] = React.useState({});//storing the data in key value pair which is user is selecting..
+            const [score, setScore] = React.useState(0);
+            const [showScore, setShowScore] = React.useState(false);
+
+
+            const handleChange = (quesIndex, selectedAns) =>{
+                setSelectedAnswers((prevSelectedAnswers)=>({
+                    ...prevSelectedAnswers, 
+                    [quesIndex] : selectedAns,
+                    //sending the indexofQuestion and answer which user is selected.
+                }))
+            }
+
+            const handleSubmit = () =>{
+                let currentScore = 0;
+                questions.forEach((ques, index)=>{
+                    if(selectedAnswers[index] === ques.correct){
+                        currentScore++;
+                    }
+                })
+                setScore(currentScore);
+                setShowScore(true);
+                //here we are checking the user answers to correct answer and calculating the score...
+            }
+
+            const handleRestart = () =>{
+                setSelectedAnswers({});
+                setScore(0);
+                setShowScore(false);
+                //here we are Resetting the Quiz to default values...
+            }
+
+            return(
+                <div className="container">
+                    {showScore ? (
+                        <div className='scoreCard'>
+                            <h1>Score Card</h1>
+                            <h2>Your Total Score is {score} Out of {questions.length}</h2>
+                            <button className='resetBtn' onClick={handleRestart}>Restart Quiz</button>
+                        </div>
+                    ): (
+                        <div>
+                            <h1>Quiz</h1>
+                            {questions.map((ques, index)=>{
+                                return(
+                                    <div key={index} className='quizBox'>
+                                        <h2>{ques.question}</h2>
+                                        {ques.answers.map((ans)=>{
+                                            return (
+                                                <div key={ans}>
+                                                    <label htmlFor="">
+                                                        <input className='radioBtn' type="radio" value={ans} onChange={()=>handleChange(index, ans)}
+                                                        />
+                                                        {ans}
+                                                    </label>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                )
+                            })}
+                            <button className='submitBtn' onClick={handleSubmit}>Submit</button>
+                        </div>
+                    )}
+                </div>
+            )
+        }
+
+
+        const root = document.getElementById('root');
+        const reactRoot = ReactDOM.createRoot(root);
+        reactRoot.render(<Quit />);
+    </script>
+</body>
+</html>
